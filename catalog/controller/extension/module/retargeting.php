@@ -161,7 +161,7 @@ class ControllerExtensionModuleRetargeting extends Controller {
                     $productImage = $this->config->get('config_url') . 'image/no_image-40x40.png';
                 }
 
-                $roundePrice = number_format($productPrice, 2, '.', '');
+                $roundPrice = number_format($productPrice, 2, '.', '');
 
                 $price = number_format($productPrice, 2, '.', '');
                 $promoPrice = $productSpecialPrice > 0 ? number_format($productSpecialPrice, 2, '.', '') : $price;
@@ -190,11 +190,11 @@ class ControllerExtensionModuleRetargeting extends Controller {
                 $product = [
                     'product id' => $product['product_id'],
                     'product name' => str_replace('"', "'", $product['name']),
-                    'product url' => htmlspecialchars_decode($productUrl),
-                    'image url' => str_replace(' ', '%20', $productImage),
+                    'product url' => $this->fixURL($productUrl),
+                    'image url' => $this->fixURL($productImage),
                     'stock' => $product['quantity'],
-                    'price' => number_format($roundePrice, 2, '.', ''),
-                    'sale price' => $productSpecialPrice > 0 ? number_format($productSpecialPrice, 2, '.', '') : $roundePrice,
+                    'price' => number_format($roundPrice, 2, '.', ''),
+                    'sale price' => $productSpecialPrice > 0 ? number_format($productSpecialPrice, 2, '.', '') : $roundPrice,
                     'brand' => $product['manufacturer'],
                     'category' => $productCategoryTree[0]['name'],
                     'extra data' => json_encode($extraData, JSON_UNESCAPED_UNICODE)
@@ -216,20 +216,22 @@ class ControllerExtensionModuleRetargeting extends Controller {
 
     public function fixURL($url)
     {
+        $url = str_replace("&amp;", "&", $url);
+
         if (!filter_var($url, FILTER_VALIDATE_URL) && !strpos($url, "%20")) {
             $new_URL = explode("?", $url, 2);
             $newURL = explode("/",$new_URL[0]);
-    
+
             if ($this->checkHTTP === null) {
                 $this->checkHTTP = !empty(array_intersect(["https:","http:"], $newURL));
-            } 
-            
+            }
+
             foreach ($newURL as $k=>$v ){
                 if (!$this->checkHTTP || $this->checkHTTP && $k > 2) {
                     $newURL[$k] = rawurlencode($v);
                 }
             }
-    
+
             if (isset($new_URL[1])) {
                 $new_URL[0] = implode("/",$newURL);
                 $new_URL[1] = str_replace("&amp;","&",$new_URL[1]);
