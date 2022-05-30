@@ -218,7 +218,7 @@ class ControllerExtensionModuleRetargeting extends Controller {
     {
         $url = str_replace("&amp;", "&", $url);
 
-        if (!filter_var($url, FILTER_VALIDATE_URL) && !strpos($url, "%20")) {
+//         if (!filter_var($url, FILTER_VALIDATE_URL) && !strpos($url, "%20")) {
             $new_URL = explode("?", $url, 2);
             $newURL = explode("/",$new_URL[0]);
 
@@ -239,8 +239,8 @@ class ControllerExtensionModuleRetargeting extends Controller {
             } else {
                 return implode("/",$newURL);
             }
-        }
-        return $url;
+//         }
+//         return $url;
     }
 
     /**
